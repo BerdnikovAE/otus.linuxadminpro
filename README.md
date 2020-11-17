@@ -3,4 +3,6 @@
 Домашние задания по курсу
 
 [ДЗ 01](https://github.com/BerdnikovAE/manual_kernel_update)
+[ДЗ 02](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/02)
+
 
