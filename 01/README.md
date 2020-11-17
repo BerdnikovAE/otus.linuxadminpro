@@ -20,8 +20,7 @@
 Проверяем:
 
 ```
-01> mkdir test
-01>cd test
+
 01\test> vagrant init berdnikovae/centos-7-9
 01\test> vagrant up
 ...
