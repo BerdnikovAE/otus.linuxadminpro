@@ -1,3 +1,4 @@
 *.vdi
 *.iso
 .vagrant
+01/packer/packer_cache
