@@ -13,6 +13,10 @@ otuslinux:       761856 blocks super 1.2 level 6, 512k chunk, algorithm 2 [5/5] 
 ...
 otuslinux: md0 : active raid6 sde[5] sdf[4] sdd[2] sdc[1] sdb[0]
 otuslinux:       761856 blocks super 1.2 level 6, 512k chunk, algorithm 2 [5/4] [UUU_U]
+...
+otuslinux: md0 : active raid6 sdf[4] sde[3] sdd[2] sdc[1] sdb[0]
+otuslinux:       761856 blocks super 1.2 level 6, 512k chunk, algorithm 2 [5/5] [UUUUU]
+
 ```
 
 Подключаемся по ssh 
