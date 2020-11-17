@@ -23,6 +23,39 @@ otuslinux:       761856 blocks super 1.2 level 6, 512k chunk, algorithm 2 [5/5] 
 
 ```
 > vagrant ssh
+[vagrant@otuslinux ~]$ sudo mdadm -D /dev/md0
+/dev/md0:
+           Version : 1.2
+     Creation Time : Tue Nov 17 11:20:36 2020
+        Raid Level : raid6
+        Array Size : 761856 (744.00 MiB 780.14 MB)
+     Used Dev Size : 253952 (248.00 MiB 260.05 MB)
+      Raid Devices : 5
+     Total Devices : 5
+       Persistence : Superblock is persistent
+
+       Update Time : Tue Nov 17 11:23:19 2020
+             State : clean
+    Active Devices : 5
+   Working Devices : 5
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 512K
+
+Consistency Policy : resync
+
+              Name : otuslinux:0  (local to host otuslinux)
+              UUID : 03d2832d:ac8dfa47:865a9e1a:db0627fe
+            Events : 41
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+       4       8       80        4      active sync   /dev/sdf
 
 [vagrant@otuslinux ~]$ df -h
 Filesystem      Size  Used Avail Use% Mounted on
