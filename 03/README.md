@@ -39,7 +39,7 @@ tmpfs                            118M     0  118M   0% /sys/fs/cgroup
 tmpfs                             24M     0   24M   0% /run/user/1000
 ```
 Создаем временный Logical Volume для переноса /
-```
+```sh
 [root@lvm vagrant]# pvcreate /dev/sdb
   Physical volume "/dev/sdb" successfully created.
 
@@ -50,28 +50,28 @@ tmpfs                             24M     0   24M   0% /run/user/1000
   Logical volume "lv_root" created.
 ```
 Создаем файловую систему, монтируем и копируем на нее корень
-```
+```sh
 [root@lvm vagrant]# mkfs.xfs /dev/vg_root/lv_root
 [root@lvm vagrant]# mount /dev/vg_root/lv_root /mnt
 ```
 копируем данные /
-```
+```sh
 [root@lvm vagrant]# xfsdump -J - /dev/VolGroup00/LogVol00 | xfsrestore -J - /mnt
 ```
 
 перемаунчиваем, делаем chroot и обновляем grub
-```
+```sh
 [root@lvm ~]# for i in /proc/ /sys/ /dev/ /run/ /boot/; do mount --bind $i /mnt/$i; done
 [root@lvm ~]# chroot /mnt/
 [root@lvm ~]# grub2-mkconfig -o /boot/grub2/grub.cfg
 
 ```
 какая-то магия с initrd...
-```
+```sh
 [root@lvm /]# cd /boot ; for i in `ls initramfs-*img`; do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force; done
 ```
 правим новый grub
-```
+```sh
 [root@lvm boot]# sed -i 's/rd.lvm.lv=VolGroup00\/LogVol00/rd.lvm.lv=vg_root\/lv_root/g' /boot/grub2/grub.cfg
 
 [root@lvm boot]# exit
@@ -79,7 +79,7 @@ tmpfs                             24M     0   24M   0% /run/user/1000
 ```
 
 После ребута подключаемся и видим перенесннный /
-```
+```sh
 03> vagrant ssh
 ...
 [vagrant@lvm ~]$ sudo su
@@ -98,12 +98,12 @@ sdd                       8:48   0    1G  0 disk
 sde                       8:64   0    1G  0 disk
 ```
 Убиваем старый LV
-```
+```sh
 [root@lvm vagrant]# lvremove /dev/VolGroup00/LogVol00
 [root@lvm vagrant]# lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
 ```
 и снова проделываем этот фокус обратно 
-```
+```sh
 [root@lvm vagrant]# mkfs.xfs /dev/VolGroup00/LogVol00
 [root@lvm vagrant]# mount /dev/VolGroup00/LogVol00 /mnt
 [root@lvm vagrant]# xfsdump -J - /dev/vg_root/lv_root | xfsrestore -J - /mnt
@@ -113,7 +113,7 @@ sde                       8:64   0    1G  0 disk
 ```
 ## 2. выделить том под /var
 теперь до ребута можно перенести var
-```
+```sh
 [root@lvm /]# pvcreate /dev/sdc /dev/sdd
 [root@lvm /]# vgcreate vg_var /dev/sdc /dev/sdd
 [root@lvm /]# lvcreate -L 950M -m1 -n lv_var vg_var
@@ -128,7 +128,7 @@ sde                       8:64   0    1G  0 disk
 [root@lvm vagrant]# reboot
 ```
 
-```
+```sh
 03> vagrant ssh
 Last login: Wed Nov 18 15:28:21 2020 from 10.0.2.2
 [vagrant@lvm ~]$ sudo su
@@ -173,7 +173,7 @@ Do you really want to remove active logical volume vg_root/lv_root? [y/n]: y
 ## 3. /home - сделать том для снэпшотов
 
 снова как обычно делаем LV, копируем данные, перемоунчиваем
-```
+```sh
 [root@lvm vagrant]# lvcreate -n LogVol_Home -L 2G /dev/VolGroup00
 [root@lvm vagrant]# mkfs.xfs /dev/VolGroup00/LogVol_Home
 [root@lvm vagrant]# mount /dev/VolGroup00/LogVol_Home /mnt/
@@ -183,26 +183,26 @@ Do you really want to remove active logical volume vg_root/lv_root? [y/n]: y
 [root@lvm vagrant]# mount /dev/VolGroup00/LogVol_Home /home/
 ```
 правим fstab чтоб автомаунт был
-```
+```sh
 [root@lvm vagrant]# echo "`blkid | grep Home | awk '{print $2}'` /home xfs defaults 0 0" >> /etc/fstab
 ```
 делаем кучу файликов
-```
+```sh
 [root@lvm vagrant]# touch /home/file{1..20}
 ```
 снимаем снэпшот, удалем файлы
-```
+```sh
 [root@lvm vagrant]# lvcreate -L 100MB -s -n home_snap /dev/VolGroup00/LogVol_Home
 [root@lvm vagrant]# rm -f /home/file{11..20}
 ```
 мержим
-```
+```sh
 [root@lvm vagrant]# umount /home
 [root@lvm vagrant]# lvconvert --merge /dev/VolGroup00/home_snap
 [root@lvm vagrant]# mount /home
 ```
 проверяем, файлы на месте
-```
+```sh
 [root@lvm vagrant]# ls -la /home
 total 0
 drwxr-xr-x.  3 root    root    292 Nov 18 15:38 .
