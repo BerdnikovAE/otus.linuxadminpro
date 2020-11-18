@@ -18,7 +18,7 @@ reboot
 
 
 # после ребута перенос обратно 
-lvremove /dev/VolGroup00/LogVol00
+lvremove -f /dev/VolGroup00/LogVol00
 lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
 mkfs.xfs /dev/VolGroup00/LogVol00
 mount /dev/VolGroup00/LogVol00 /mnt
@@ -43,7 +43,7 @@ reboot
 
 
 # переносим home и проверяем работу со снэпшотом
-lvremove /dev/vg_root/lv_root
+lvremove -f /dev/vg_root/lv_root
 vgremove /dev/vg_root
 pvremove /dev/sdb
 lvcreate -n LogVol_Home -L 2G /dev/VolGroup00
@@ -60,3 +60,6 @@ rm -f /home/file{11..20}
 umount /home
 lvconvert --merge /dev/VolGroup00/home_snap
 mount /home
+ls -la /home
+
+

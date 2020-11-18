@@ -1,0 +1,676 @@
+Windows PowerShell
+(C) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
+
+Попробуйте новую кроссплатформенную оболочку PowerShell (https://aka.ms/pscore6)
+
+PS C:\Users\AE> cd
+PS C:\Users\AE> cd \
+PS C:\> cd .\LAP\otus.linuxadminpro\03
+PS C:\LAP\otus.linuxadminpro\03> vagrant ssh
+[vagrant@localhost ~]$ sudo su
+[root@localhost vagrant]# yum install -y xfsdump
+pvcreate /dev/sdb
+vgcreate vg_root /dev/sdb
+lvcreate -n lv_root -l +100%FREE /dev/vg_root
+mkfs.xfs /dev/vg_root/lv_root
+mount /dev/vg_root/lv_root /mnt
+xfsdump -J - /dev/VolGroup00/LogVol00 | xfsrestore -J - /mnt
+for i in /proc/ /sys/ /dev/ /run/ /boot/; do mount --bind $i /mnt/$i; done
+chroot /mnt/
+grub2-mkconfig -o /boot/grub2/grub.cfg
+cd /boot ; for i in `ls initramfs-*img`; do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force; done
+sed -i 's/rd.lvm.lv=VolGroup00\/LogVol00/rd.lvm.lv=vg_root\/lv_root/g' /boot/grub2/grub.cfg
+Loaded plugins: fastestmirror
+Determining fastest mirrors
+ * base: mirror.truenetwork.ru
+ * extras: mirror.truenetwork.ru
+ * updates: mirror.truenetwork.ru
+base                                                                                          | 3.6 kB  00:00:00
+extras                                                                                        | 2.9 kB  00:00:00
+updates                                                                                       | 2.9 kB  00:00:00
+(1/4): base/7/x86_64/group_gz                                                                 | 153 kB  00:00:00
+(2/4): extras/7/x86_64/primary_db                                                             | 222 kB  00:00:00
+(3/4): updates/7/x86_64/primary_db                                                            | 3.6 MB  00:00:01
+(4/4): base/7/x86_64/primary_db                                                               | 6.1 MB  00:00:02
+Resolving Dependencies
+--> Running transaction check
+---> Package xfsdump.x86_64 0:3.1.7-1.el7 will be installed
+--> Processing Dependency: attr >= 2.0.0 for package: xfsdump-3.1.7-1.el7.x86_64
+--> Running transaction check
+---> Package attr.x86_64 0:2.4.46-13.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=====================================================================================================================
+ Package                    Arch                      Version                          Repository               Size
+=====================================================================================================================
+Installing:
+ xfsdump                    x86_64                    3.1.7-1.el7                      base                    308 k
+Installing for dependencies:
+ attr                       x86_64                    2.4.46-13.el7                    base                     66 k
+
+Transaction Summary
+=====================================================================================================================
+Install  1 Package (+1 Dependent package)
+
+Total download size: 374 k
+Installed size: 1.1 M
+Downloading packages:
+warning: /var/cache/yum/x86_64/7/base/packages/xfsdump-3.1.7-1.el7.x86_64.rpm: Header V3 RSA/SHA256 Signature, key ID f4a80eb5: NOKEY
+Public key for xfsdump-3.1.7-1.el7.x86_64.rpm is not installed
+(1/2): xfsdump-3.1.7-1.el7.x86_64.rpm                                                         | 308 kB  00:00:00
+(2/2): attr-2.4.46-13.el7.x86_64.rpm                                                          |  66 kB  00:00:00
+---------------------------------------------------------------------------------------------------------------------
+Total                                                                                482 kB/s | 374 kB  00:00:00
+Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+Importing GPG key 0xF4A80EB5:
+ Userid     : "CentOS-7 Key (CentOS 7 Official Signing Key) <security@centos.org>"
+ Fingerprint: 6341 ab27 53d7 8a78 a7c2 7bb1 24c6 a8a7 f4a8 0eb5
+ Package    : centos-release-7-5.1804.el7.centos.x86_64 (@anaconda)
+ From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : attr-2.4.46-13.el7.x86_64                                                                         1/2
+  Installing : xfsdump-3.1.7-1.el7.x86_64                                                                        2/2
+  Verifying  : attr-2.4.46-13.el7.x86_64                                                                         1/2
+  Verifying  : xfsdump-3.1.7-1.el7.x86_64                                                                        2/2
+
+Installed:
+  xfsdump.x86_64 0:3.1.7-1.el7
+
+Dependency Installed:
+  attr.x86_64 0:2.4.46-13.el7
+
+Complete!
+[root@localhost vagrant]# pvcreate /dev/sdb
+  Physical volume "/dev/sdb" successfully created.
+[root@localhost vagrant]# vgcreate vg_root /dev/sdb
+  Volume group "vg_root" successfully created
+[root@localhost vagrant]# lvcreate -n lv_root -l +100%FREE /dev/vg_root
+  Logical volume "lv_root" created.
+[root@localhost vagrant]# mkfs.xfs /dev/vg_root/lv_root
+meta-data=/dev/vg_root/lv_root   isize=512    agcount=4, agsize=655104 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=2620416, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+[root@localhost vagrant]# mount /dev/vg_root/lv_root /mnt
+[root@localhost vagrant]# xfsdump -J - /dev/VolGroup00/LogVol00 | xfsrestore -J - /mnt
+xfsrestore: using file dump (drive_simple) strategy
+xfsrestore: version 3.1.7 (dump format 3.0)
+xfsdump: using file dump (drive_simple) strategy
+xfsdump: version 3.1.7 (dump format 3.0)
+xfsdump: level 0 dump of localhost.localdomain:/
+xfsdump: dump date: Wed Nov 18 18:40:24 2020
+xfsdump: session id: 9d78ed4e-913d-4332-8ca1-18acd0e11243
+xfsdump: session label: ""
+xfsrestore: searching media for dump
+xfsdump: ino map phase 1: constructing initial dump list
+xfsdump: ino map phase 2: skipping (no pruning necessary)
+xfsdump: ino map phase 3: skipping (only one dump stream)
+xfsdump: ino map construction complete
+xfsdump: estimated dump size: 732869952 bytes
+xfsdump: creating dump session media file 0 (media 0, file 0)
+xfsdump: dumping ino map
+xfsdump: dumping directories
+xfsrestore: examining media file 0
+xfsrestore: dump description:
+xfsrestore: hostname: localhost.localdomain
+xfsrestore: mount point: /
+xfsrestore: volume: /dev/mapper/VolGroup00-LogVol00
+xfsrestore: session time: Wed Nov 18 18:40:24 2020
+xfsrestore: level: 0
+xfsrestore: session label: ""
+xfsrestore: media label: ""
+xfsrestore: file system id: b60e9498-0baa-4d9f-90aa-069048217fee
+xfsrestore: session id: 9d78ed4e-913d-4332-8ca1-18acd0e11243
+xfsrestore: media id: 08014c9c-af67-4391-9862-34c09e61d298
+xfsrestore: searching media for directory dump
+xfsrestore: reading directories
+xfsdump: dumping non-directory files
+xfsrestore: 2671 directories and 23408 entries processed
+xfsrestore: directory post-processing
+xfsrestore: restoring non-directory files
+xfsrestore: NOTE: ino 67147315 gen 207344611 not referenced: placing in orphanage
+xfsrestore: NOTE: ino 67147334 gen 775337265 not referenced: placing in orphanage
+xfsdump: ending media file
+xfsdump: media file size 710011120 bytes
+xfsdump: dump size (non-dir files) : 696959872 bytes
+xfsdump: dump complete: 20 seconds elapsed
+xfsdump: Dump Status: SUCCESS
+xfsrestore: WARNING: unable to rmdir /mnt/orphanage: Directory not empty
+xfsrestore: restore complete: 20 seconds elapsed
+xfsrestore: Restore Status: SUCCESS
+[root@localhost vagrant]# for i in /proc/ /sys/ /dev/ /run/ /boot/; do mount --bind $i /mnt/$i; done
+[root@localhost vagrant]# chroot /mnt/
+[root@localhost /]# grub2-mkconfig -o /boot/grub2/grub.cfg
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-3.10.0-862.2.3.el7.x86_64
+Found initrd image: /boot/initramfs-3.10.0-862.2.3.el7.x86_64.img
+done
+[root@localhost /]# cd /boot ; for i in `ls initramfs-*img`; do dracut -v $i `echo $i|sed "s/initramfs-//g; s/.img//g"` --force; done
+Executing: /sbin/dracut -v initramfs-3.10.0-862.2.3.el7.x86_64.img 3.10.0-862.2.3.el7.x86_64 --force
+dracut module 'busybox' will not be installed, because command 'busybox' could not be found!
+dracut module 'crypt' will not be installed, because command 'cryptsetup' could not be found!
+dracut module 'dmraid' will not be installed, because command 'dmraid' could not be found!
+dracut module 'dmsquash-live-ntfs' will not be installed, because command 'ntfs-3g' could not be found!
+dracut module 'mdraid' will not be installed, because command 'mdadm' could not be found!
+dracut module 'multipath' will not be installed, because command 'multipath' could not be found!
+dracut module 'busybox' will not be installed, because command 'busybox' could not be found!
+dracut module 'crypt' will not be installed, because command 'cryptsetup' could not be found!
+dracut module 'dmraid' will not be installed, because command 'dmraid' could not be found!
+dracut module 'dmsquash-live-ntfs' will not be installed, because command 'ntfs-3g' could not be found!
+dracut module 'mdraid' will not be installed, because command 'mdadm' could not be found!
+dracut module 'multipath' will not be installed, because command 'multipath' could not be found!
+*** Including module: bash ***
+*** Including module: nss-softokn ***
+*** Including module: i18n ***
+*** Including module: drm ***
+*** Including module: plymouth ***
+*** Including module: dm ***
+Skipping udev rule: 64-device-mapper.rules
+Skipping udev rule: 60-persistent-storage-dm.rules
+Skipping udev rule: 55-dm.rules
+*** Including module: kernel-modules ***
+Omitting driver floppy
+*** Including module: lvm ***
+Skipping udev rule: 64-device-mapper.rules
+Skipping udev rule: 56-lvm.rules
+Skipping udev rule: 60-persistent-storage-lvm.rules
+*** Including module: qemu ***
+*** Including module: resume ***
+*** Including module: rootfs-block ***
+*** Including module: terminfo ***
+*** Including module: udev-rules ***
+Skipping udev rule: 40-redhat-cpu-hotplug.rules
+Skipping udev rule: 91-permissions.rules
+*** Including module: biosdevname ***
+*** Including module: systemd ***
+*** Including module: usrmount ***
+*** Including module: base ***
+*** Including module: fs-lib ***
+*** Including module: shutdown ***
+*** Including modules done ***
+*** Installing kernel module dependencies and firmware ***
+*** Installing kernel module dependencies and firmware done ***
+*** Resolving executable dependencies ***
+*** Resolving executable dependencies done***
+*** Hardlinking files ***
+*** Hardlinking files done ***
+*** Stripping files ***
+*** Stripping files done ***
+*** Generating early-microcode cpio image contents ***
+*** No early-microcode cpio image needed ***
+*** Store current command line parameters ***
+*** Creating image file ***
+*** Creating image file done ***
+*** Creating initramfs image file '/boot/initramfs-3.10.0-862.2.3.el7.x86_64.img' done ***
+[root@localhost boot]# sed -i 's/rd.lvm.lv=VolGroup00\/LogVol00/rd.lvm.lv=vg_root\/lv_root/g' /boot/grub2/grub.cfg
+[root@localhost boot]# exit
+exit
+[root@localhost vagrant]# lsblk
+NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                       8:0    0   40G  0 disk
+├─sda1                    8:1    0    1M  0 part
+├─sda2                    8:2    0    1G  0 part /mnt/boot
+└─sda3                    8:3    0   39G  0 part
+  ├─VolGroup00-LogVol00 253:0    0 37.5G  0 lvm  /
+  └─VolGroup00-LogVol01 253:1    0  1.5G  0 lvm  [SWAP]
+sdb                       8:16   0   10G  0 disk
+└─vg_root-lv_root       253:2    0   10G  0 lvm  /mnt
+sdc                       8:32   0    2G  0 disk
+sdd                       8:48   0    1G  0 disk
+sde                       8:64   0    1G  0 disk
+[root@localhost vagrant]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+PS C:\LAP\otus.linuxadminpro\03> vagrant ssh
+Last login: Wed Nov 18 18:39:49 2020 from 10.0.2.2
+[vagrant@localhost ~]$ sudo su
+[root@localhost vagrant]# lvremove /dev/VolGroup00/LogVol00
+vcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
+mkfs.xfs /dev/VolGroup00/LogVol00
+mount /dev/VolGroup00/LogVol00 /mnt
+xfsdump -J - /dev/vg_root/Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]:   WARNING: Invalid input 'lvcreate...'.
+Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]:   WARNING: Invalid input 'mkfs.xfs...'.
+Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]:   WARNING: Invalid input 'mount /d...'.
+Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]: lv_root | xfsrestore -J - /mnt
+  WARNING: Invalid input 'xfsdump ...'.
+Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]: for i in /proc/ /sys/ /dev/ /run/ /boot/; do mount --bind $i /mnt/$i; done
+  WARNING: Invalid input 'for i in...'.
+Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]: chroot /mnt/
+g  WARNING: Invalid input 'chroot /...'.
+Do you really want to remove active logical volume VolGroup00/LogVol00? [y/n]: rub2-mkconfig -o /boot/grub2/grub.cfg^C  Interrupted...
+  Logical volume VolGroup00/LogVol00 not removed.
+[root@localhost vagrant]# lvremove -h
+  lvremove - Remove logical volume(s) from the system
+
+  lvremove VG|LV|Tag|Select ...
+        [ -A|--autobackup y|n ]
+        [ -f|--force ]
+        [ -S|--select String ]
+        [    --nohistory ]
+        [    --noudevsync ]
+        [    --reportformat basic|json ]
+        [ COMMON_OPTIONS ]
+
+  Common options for lvm:
+        [ -d|--debug ]
+        [ -h|--help ]
+        [ -q|--quiet ]
+        [ -v|--verbose ]
+        [ -y|--yes ]
+        [ -t|--test ]
+        [    --commandprofile String ]
+        [    --config String ]
+        [    --driverloaded y|n ]
+        [    --lockopt String ]
+        [    --longhelp ]
+        [    --profile String ]
+        [    --version ]
+
+  Use --longhelp to show all options and advanced commands.
+[root@localhost vagrant]# lvremove -f /dev/VolGroup00/LogVol00
+  Logical volume "LogVol00" successfully removed
+[root@localhost vagrant]# lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
+WARNING: xfs signature detected on /dev/VolGroup00/LogVol00 at offset 0. Wipe it? [y/n]: n
+  Aborted wiping of xfs.
+  1 existing signature left on the device.
+  Logical volume "LogVol00" created.
+[root@localhost vagrant]# lvcreate -n -f VolGroup00/LogVol00 -L 8G /dev/VolGroup00
+  Logical volume name "-f" is invalid.
+  Run `lvcreate --help' for more information.
+[root@localhost vagrant]# lvcreate -n -y VolGroup00/LogVol00 -L 8G /dev/VolGroup00
+  Logical volume name "-y" is invalid.
+  Run `lvcreate --help' for more information.
+[root@localhost vagrant]# lvcreate -h
+  lvcreate - Create a logical volume
+
+  Create a linear LV.
+  lvcreate -L|--size Size[m|UNIT] VG
+        [ -l|--extents Number[PERCENT] ]
+        [    --type linear ]
+        [ COMMON_OPTIONS ]
+        [ PV ... ]
+
+  Create a striped LV (infers --type striped).
+  lvcreate -i|--stripes Number -L|--size Size[m|UNIT] VG
+        [ -l|--extents Number[PERCENT] ]
+        [ -I|--stripesize Size[k|UNIT] ]
+        [ COMMON_OPTIONS ]
+        [ PV ... ]
+
+  Create a raid1 or mirror LV (infers --type raid1|mirror).
+  lvcreate -m|--mirrors Number -L|--size Size[m|UNIT] VG
+        [ -l|--extents Number[PERCENT] ]
+        [ -R|--regionsize Size[m|UNIT] ]
+        [    --mirrorlog core|disk ]
+        [    --minrecoveryrate Size[k|UNIT] ]
+        [    --maxrecoveryrate Size[k|UNIT] ]
+        [ COMMON_OPTIONS ]
+        [ PV ... ]
+
+  Create a raid LV (a specific raid level must be used, e.g. raid1).
+  lvcreate --type raid -L|--size Size[m|UNIT] VG
+        [ -l|--extents Number[PERCENT] ]
+        [ -m|--mirrors Number ]
+        [ -i|--stripes Number ]
+        [ -I|--stripesize Size[k|UNIT] ]
+        [ -R|--regionsize Size[m|UNIT] ]
+        [    --minrecoveryrate Size[k|UNIT] ]
+        [    --maxrecoveryrate Size[k|UNIT] ]
+        [ COMMON_OPTIONS ]
+        [ PV ... ]
+
+  Create a raid10 LV.
+  lvcreate -m|--mirrors Number -i|--stripes Number -L|--size Size[m|UNIT] VG
+        [ -l|--extents Number[PERCENT] ]
+        [ -I|--stripesize Size[k|UNIT] ]
+        [ -R|--regionsize Size[m|UNIT] ]
+        [    --minrecoveryrate Size[k|UNIT] ]
+        [    --maxrecoveryrate Size[k|UNIT] ]
+        [ COMMON_OPTIONS ]
+        [ PV ... ]
+
+  Create a COW snapshot LV of an origin LV.
+  lvcreate -s|--snapshot -L|--size Size[m|UNIT] LV
+        [ -l|--extents Number[PERCENT] ]
+        [ -i|--stripes Number ]
+        [ -I|--stripesize Size[k|UNIT] ]
+        [ -c|--chunksize Size[k|UNIT] ]
+        [    --type snapshot ]
+        [ COMMON_OPTIONS ]
+        [ PV ... ]
+
+  Create a thin pool.
+  lvcreate --type thin-pool -L|--size Size[m|UNIT] VG
+        [ -l|--extents Number[PERCENT] ]
+        [ -c|--chunksize Size[k|UNIT] ]
+        [ -i|--stripes Number ]
+        [ -I|--stripesize Size[k|UNIT] ]
+        [    --thinpool LV_new ]
+        [    --poolmetadatasize Size[m|UNIT] ]
+        [    --poolmetadataspare y|n ]
+        [    --discards passdown|nopassdown|ignore ]
+        [    --errorwhenfull y|n ]
+        [ COMMON_OPTIONS ]
+        [ PV ... ]
+
+  Create a cache pool.
+  lvcreate --type cache-pool -L|--size Size[m|UNIT] VG
+        [ -l|--extents Number[PERCENT] ]
+        [ -H|--cache ]
+        [ -c|--chunksize Size[k|UNIT] ]
+        [    --poolmetadatasize Size[m|UNIT] ]
+        [    --poolmetadataspare y|n ]
+        [    --cachemode writethrough|writeback|passthrough ]
+        [    --cachepolicy String ]
+        [    --cachesettings String ]
+        [    --cachemetadataformat auto|1|2 ]
+        [ COMMON_OPTIONS ]
+        [ PV ... ]
+
+  Create a thin LV in a thin pool (infers --type thin).
+  lvcreate -V|--virtualsize Size[m|UNIT] --thinpool LV_thinpool VG
+        [ -T|--thin ]
+        [    --type thin ]
+        [    --discards passdown|nopassdown|ignore ]
+        [    --errorwhenfull y|n ]
+        [ COMMON_OPTIONS ]
+
+  Create a thin LV that is a snapshot of an existing thin LV
+  (infers --type thin).
+  lvcreate -s|--snapshot LV_thin
+        [    --type thin ]
+        [    --discards passdown|nopassdown|ignore ]
+        [    --errorwhenfull y|n ]
+        [ COMMON_OPTIONS ]
+
+  Create a thin LV that is a snapshot of an external origin LV.
+  lvcreate --type thin --thinpool LV_thinpool LV
+        [ -T|--thin ]
+        [ -c|--chunksize Size[k|UNIT] ]
+        [    --poolmetadatasize Size[m|UNIT] ]
+        [    --poolmetadataspare y|n ]
+        [    --discards passdown|nopassdown|ignore ]
+        [    --errorwhenfull y|n ]
+        [ COMMON_OPTIONS ]
+
+  Create a thin LV, first creating a thin pool for it,
+  where the new thin pool is named by the --thinpool arg.
+  lvcreate --type thin -V|--virtualsize Size[m|UNIT] -L|--size Size[m|UNIT] --thinpool LV_new
+        [ -l|--extents Number[PERCENT] ]
+        [ -T|--thin ]
+        [ -c|--chunksize Size[k|UNIT] ]
+        [ -i|--stripes Number ]
+        [ -I|--stripesize Size[k|UNIT] ]
+        [    --poolmetadatasize Size[m|UNIT] ]
+        [    --poolmetadataspare y|n ]
+        [    --discards passdown|nopassdown|ignore ]
+        [    --errorwhenfull y|n ]
+        [ COMMON_OPTIONS ]
+        [ PV ... ]
+
+  Create a cache LV, first creating a new origin LV,
+  then combining it with the existing cache pool named
+  by the --cachepool arg.
+  lvcreate --type cache -L|--size Size[m|UNIT] --cachepool LV_cachepool VG
+        [ -l|--extents Number[PERCENT] ]
+        [ -H|--cache ]
+        [ -c|--chunksize Size[k|UNIT] ]
+        [ -i|--stripes Number ]
+        [ -I|--stripesize Size[k|UNIT] ]
+        [    --poolmetadatasize Size[m|UNIT] ]
+        [    --poolmetadataspare y|n ]
+        [    --cachemode writethrough|writeback|passthrough ]
+        [    --cachepolicy String ]
+        [    --cachesettings String ]
+        [    --cachemetadataformat auto|1|2 ]
+        [ COMMON_OPTIONS ]
+        [ PV ... ]
+
+  Common options for command:
+        [ -a|--activate y|n|ay ]
+        [ -A|--autobackup y|n ]
+        [ -C|--contiguous y|n ]
+        [ -M|--persistent y|n ]
+        [ -j|--major Number ]
+        [ -k|--setactivationskip y|n ]
+        [ -K|--ignoreactivationskip ]
+        [ -n|--name String ]
+        [ -p|--permission rw|r ]
+        [ -r|--readahead auto|none|Number ]
+        [ -W|--wipesignatures y|n ]
+        [ -Z|--zero y|n ]
+        [    --addtag Tag ]
+        [    --alloc contiguous|cling|cling_by_tags|normal|anywhere|inherit ]
+        [    --ignoremonitoring ]
+        [    --metadataprofile String ]
+        [    --minor Number ]
+        [    --monitor y|n ]
+        [    --nosync ]
+        [    --noudevsync ]
+        [    --reportformat basic|json ]
+
+  Common options for lvm:
+        [ -d|--debug ]
+        [ -h|--help ]
+        [ -q|--quiet ]
+        [ -v|--verbose ]
+        [ -y|--yes ]
+        [ -t|--test ]
+        [    --commandprofile String ]
+        [    --config String ]
+        [    --driverloaded y|n ]
+        [    --lockopt String ]
+        [    --longhelp ]
+        [    --profile String ]
+        [    --version ]
+
+  Use --longhelp to show all options and advanced commands.
+[root@localhost vagrant]# lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
+  Logical Volume "LogVol00" already exists in volume group "VolGroup00"
+[root@localhost vagrant]# lvcreate -n VolGroup00/LogVol00 -L 8G /dev/VolGroup00
+  Logical Volume "LogVol00" already exists in volume group "VolGroup00"
+[root@localhost vagrant]# mkfs.xfs /dev/VolGroup00/LogVol00
+ /dev/VolGroup00/LogVol00 /mnt
+xfsdump -J - /dev/vg_root/lv_root |meta-data=/dev/VolGroup00/LogVol00 isize=512    agcount=4, agsize=524288 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=2097152, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+ xfsrestore -J - /mnt
+for i in /proc/ /sys/ /dev/ /run/ /boot/; do mount --bind $i /mnt/$i; done
+chroot /mnt/
+grub2-mkconfig -o /boot/gru[root@localhost vagrant]# mount /dev/VolGroup00/LogVol00 /mnt
+b2/grub.cfg[root@localhost vagrant]# xfsdump -J - /dev/vg_root/lv_root | xfsrestore -J - /mnt
+xfsrestore: using file dump (drive_simple) strategy
+xfsrestore: version 3.1.7 (dump format 3.0)
+xfsdump: using file dump (drive_simple) strategy
+xfsdump: version 3.1.7 (dump format 3.0)
+xfsdump: level 0 dump of localhost.localdomain:/
+xfsdump: dump date: Wed Nov 18 18:46:20 2020
+xfsdump: session id: 508220c9-409d-4563-bfff-3aa54dea53a4
+xfsdump: session label: ""
+xfsrestore: searching media for dump
+xfsdump: ino map phase 1: constructing initial dump list
+xfsdump: ino map phase 2: skipping (no pruning necessary)
+xfsdump: ino map phase 3: skipping (only one dump stream)
+xfsdump: ino map construction complete
+xfsdump: estimated dump size: 731356672 bytes
+xfsdump: creating dump session media file 0 (media 0, file 0)
+xfsdump: dumping ino map
+xfsdump: dumping directories
+xfsrestore: examining media file 0
+xfsrestore: dump description:
+xfsrestore: hostname: localhost.localdomain
+xfsrestore: mount point: /
+xfsrestore: volume: /dev/mapper/vg_root-lv_root
+xfsrestore: session time: Wed Nov 18 18:46:20 2020
+xfsrestore: level: 0
+xfsrestore: session label: ""
+xfsrestore: media label: ""
+xfsrestore: file system id: 34d717e4-a28a-4f96-9a84-881400d3e218
+xfsrestore: session id: 508220c9-409d-4563-bfff-3aa54dea53a4
+xfsrestore: media id: 16fafdbe-7a96-4d33-9730-ce512d83ab20
+xfsrestore: searching media for directory dump
+xfsrestore: reading directories
+xfsdump: dumping non-directory files
+xfsrestore: 2676 directories and 23415 entries processed
+xfsrestore: directory post-processing
+xfsrestore: restoring non-directory files
+xfsrestore: NOTE: ino 8808627 salvaging file, placing in orphanage/8388672.3113864411/67147315.207344611
+xfsrestore: NOTE: ino 8808628 salvaging file, placing in orphanage/8388672.3113864411/67147334.775337265
+xfsdump: ending media file
+xfsdump: media file size 708637800 bytes
+xfsdump: dump size (non-dir files) : 695581552 bytes
+xfsdump: dump complete: 23 seconds elapsed
+xfsdump: Dump Status: SUCCESS
+xfsrestore: WARNING: unable to rmdir /mnt/orphanage: Directory not empty
+xfsrestore: restore complete: 23 seconds elapsed
+xfsrestore: Restore Status: SUCCESS
+[root@localhost vagrant]# for i in /proc/ /sys/ /dev/ /run/ /boot/; do mount --bind $i /mnt/$i; done
+[root@localhost vagrant]# chroot /mnt/
+[root@localhost /]# grub2-mkconfig -o /boot/grub2/grub.cfg
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-3.10.0-862.2.3.el7.x86_64
+Found initrd image: /boot/initramfs-3.10.0-862.2.3.el7.x86_64.img
+done
+[root@localhost /]# pvcreate /dev/sdc /dev/sdd
+vgcreate vg_var /dev/sdc /dev/sdd
+lvcreate -L 950M -m1 -n lv_var vg_var
+mkfs.ext4 /dev/vg_var/lv_var
+mount /dev/vg_var/lv_var /mnt
+cp -aR /var/* /mnt/
+mkdir /tmp/oldvar && mv /var/* /tmp/oldvar
+umount /mnt
+mount /dev/vg_var/lv_var /var
+echo "`blkid | grep var: | awk '{print $2}'` /var ext4 defaults 0 0" >> /etc/fstab
+exit  Physical volume "/dev/sdc" successfully created.
+  Physical volume "/dev/sdd" successfully created.
+[root@localhost /]# vgcreate vg_var /dev/sdc /dev/sdd
+  Volume group "vg_var" successfully created
+[root@localhost /]# lvcreate -L 950M -m1 -n lv_var vg_var
+  Rounding up size to full physical extent 952.00 MiB
+  Logical volume "lv_var" created.
+[root@localhost /]# mkfs.ext4 /dev/vg_var/lv_var
+mke2fs 1.42.9 (28-Dec-2013)
+Filesystem label=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+60928 inodes, 243712 blocks
+12185 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=249561088
+8 block groups
+32768 blocks per group, 32768 fragments per group
+7616 inodes per group
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+[root@localhost /]# mount /dev/vg_var/lv_var /mnt
+[root@localhost /]# cp -aR /var/* /mnt/
+[root@localhost /]# mkdir /tmp/oldvar && mv /var/* /tmp/oldvar
+[root@localhost /]# umount /mnt
+[root@localhost /]# mount /dev/vg_var/lv_var /var
+[root@localhost /]# echo "`blkid | grep var: | awk '{print $2}'` /var ext4 defaults 0 0" >> /etc/fstab
+[root@localhost /]# exit
+exit
+[root@localhost vagrant]# reboot
+Connection to 127.0.0.1 closed by remote host.
+Connection to 127.0.0.1 closed.
+PS C:\LAP\otus.linuxadminpro\03> vagrant ssh
+ssh_exchange_identification: read: Connection reset
+PS C:\LAP\otus.linuxadminpro\03> vagrant ssh
+Last login: Wed Nov 18 18:44:03 2020 from 10.0.2.2
+[vagrant@localhost ~]$ sudo su
+[root@localhost vagrant]# lvremove -f /dev/vg_root/lv_root
+  Logical volume "lv_root" successfully removed
+[root@localhost vagrant]# vgremove /dev/vg_root
+  Volume group "vg_root" successfully removed
+[root@localhost vagrant]# pvremove /dev/sdb
+  Can't open /dev/sdb exclusively.  Mounted filesystem?
+[root@localhost vagrant]# lvcreate -n LogVol_Home -L 2G /dev/VolGroup00
+mkfs.xfs /dev/VolGroup00/LogVol_Home
+mount /dev/VolGroup00/LogVol_Home /mnt/
+cp -aR /home/* /mnt/
+rm -rf /home/*
+umount /mnt
+mount /dev/VolGroup00/LogVol_Home /home/
+echo "`blkid | grep Home | awk '{print $2}'` /home xfs defaults 0 0" >> /etc/fstab
+touch /home/file{1..20}
+lvcreate -L 100MB -s -n home  Logical volume "LogVol_Home" created.
+_snap /dev/V[root@localhost vagrant]# mkfs.xfs /dev/VolGroup00/LogVol_Home
+Home
+rm -f /home/file{11..20}
+umount /home
+lvconvert --merge /dev/VolGroup00/home_snap
+mount /homemeta-data=/dev/VolGroup00/LogVol_Home isize=512    agcount=4, agsize=131072 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=0, sparse=0
+data     =                       bsize=4096   blocks=524288, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
+log      =internal log           bsize=4096   blocks=2560, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+[root@localhost vagrant]# mount /dev/VolGroup00/LogVol_Home /mnt/
+[root@localhost vagrant]# cp -aR /home/* /mnt/
+[root@localhost vagrant]# rm -rf /home/*
+[root@localhost vagrant]# umount /mnt
+[root@localhost vagrant]# mount /dev/VolGroup00/LogVol_Home /home/
+[root@localhost vagrant]# echo "`blkid | grep Home | awk '{print $2}'` /home xfs defaults 0 0" >> /etc/fstab
+[root@localhost vagrant]# touch /home/file{1..20}
+[root@localhost vagrant]# lvcreate -L 100MB -s -n home_snap /dev/VolGroup00/LogVol_Home
+  Rounding up size to full physical extent 128.00 MiB
+  Logical volume "home_snap" created.
+[root@localhost vagrant]# rm -f /home/file{11..20}
+[root@localhost vagrant]# umount /home
+[root@localhost vagrant]# lvconvert --merge /dev/VolGroup00/home_snap
+  Merging of volume VolGroup00/home_snap started.
+  VolGroup00/LogVol_Home: Merged: 100.00%
+[root@localhost vagrant]# mount /home
+[root@localhost vagrant]# ls -la /home
+total 0
+drwxr-xr-x.  3 root    root    292 Nov 18 18:54 .
+drwxr-xr-x. 18 root    root    241 Nov 18 18:46 ..
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file1
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file10
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file11
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file12
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file13
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file14
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file15
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file16
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file17
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file18
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file19
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file2
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file20
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file3
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file4
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file5
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file6
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file7
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file8
+-rw-r--r--.  1 root    root      0 Nov 18 18:54 file9
+drwx------.  3 vagrant vagrant  74 May 12  2018 vagrant
+[root@localhost vagrant]#
