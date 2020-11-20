@@ -13,10 +13,13 @@ yum install -y zfs
 # загружаем
 /sbin/modprobe zfs
 
+# тоже пригодится
+yum install -y wget
+
 
 
 ## 1. Определить алгоритм с наилучшим сжатием
-#создаем пул-зеркало 
+# создаем пул-зеркало 
 zpool create zfs_001 mirror sdb sdc
 zfs list
 
@@ -30,10 +33,10 @@ zfs set compression=gzip zfs_001/zfs_fs_002
 zfs set compression=zle zfs_001/zfs_fs_003
 zfs set compression=lz4 zfs_001/zfs_fs_004
 
-wget -O /zfs_001/zfs_fs_001/War_and_Peace.txt http://www.gutenberg.org/ebooks/2600.txt.utf-8
-wget -O /zfs_001/zfs_fs_002/War_and_Peace.txt http://www.gutenberg.org/ebooks/2600.txt.utf-8
-wget -O /zfs_001/zfs_fs_003/War_and_Peace.txt http://www.gutenberg.org/ebooks/2600.txt.utf-8
-wget -O /zfs_001/zfs_fs_004/War_and_Peace.txt http://www.gutenberg.org/ebooks/2600.txt.utf-8
+wget -qO /zfs_001/zfs_fs_001/War_and_Peace.txt "http://www.gutenberg.org/ebooks/2600.txt.utf-8"
+wget -qO /zfs_001/zfs_fs_002/War_and_Peace.txt "http://www.gutenberg.org/ebooks/2600.txt.utf-8"
+wget -qO /zfs_001/zfs_fs_003/War_and_Peace.txt "http://www.gutenberg.org/ebooks/2600.txt.utf-8"
+wget -qO /zfs_001/zfs_fs_004/War_and_Peace.txt "http://www.gutenberg.org/ebooks/2600.txt.utf-8"
 
 zfs list
 
@@ -41,7 +44,6 @@ zfs list
 
 ## 2. Определить настройки pool’a
 # качаем, смотрим что там 
-yum install -y wget
 
 wget -qO zfs_task1.tar.gz "https://drive.google.com/u/0/uc?id=1KRBNW33QWqbvbVHa3hLJivOAt60yukkg&export=download"
 tar -xvf zfs_task1.tar.gz
