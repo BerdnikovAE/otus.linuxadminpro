@@ -9,7 +9,7 @@
 
 ...
 
-[ДЗ 08. ZFS](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/04) <br>
+[ДЗ 08. ZFS](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/08) <br>
 
 
 
