@@ -33,12 +33,20 @@ zfs set compression=gzip zfs_001/zfs_fs_002
 zfs set compression=zle zfs_001/zfs_fs_003
 zfs set compression=lz4 zfs_001/zfs_fs_004
 
-wget -qO /zfs_001/zfs_fs_001/War_and_Peace.txt "http://www.gutenberg.org/ebooks/2600.txt.utf-8"
-wget -qO /zfs_001/zfs_fs_002/War_and_Peace.txt "http://www.gutenberg.org/ebooks/2600.txt.utf-8"
-wget -qO /zfs_001/zfs_fs_003/War_and_Peace.txt "http://www.gutenberg.org/ebooks/2600.txt.utf-8"
-wget -qO /zfs_001/zfs_fs_004/War_and_Peace.txt "http://www.gutenberg.org/ebooks/2600.txt.utf-8"
 
+# качаем 50 книжек
+for i in {1..50}; do echo "Download $i/50 book"; wget -qO /zfs_001/zfs_fs_001/$i.txt http://www.gutenberg.org/ebooks/$i.txt.utf-8; done
+
+# раскладываем их в остальлыные 3 папки 
+cp /zfs_001/zfs_fs_001/* /zfs_001/zfs_fs_002
+cp /zfs_001/zfs_fs_001/* /zfs_001/zfs_fs_003
+cp /zfs_001/zfs_fs_001/* /zfs_001/zfs_fs_004
+
+# смотрим на объем
 zfs list
+# смотрим на качество компрессии
+zfs get compressratio,compression /zfs_001/zfs_fs_00{1..4}
+
 
 
 

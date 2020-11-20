@@ -43,23 +43,45 @@ zfs set compression=gzip zfs_001/zfs_fs_002
 zfs set compression=zle zfs_001/zfs_fs_003
 zfs set compression=lz4 zfs_001/zfs_fs_004
 
-wget -O /zfs_001/zfs_fs_001/War_and_Peace.txt http://www.gutenberg.org/ebooks/2600.txt.utf-8
-wget -O /zfs_001/zfs_fs_002/War_and_Peace.txt http://www.gutenberg.org/ebooks/2600.txt.utf-8
-wget -O /zfs_001/zfs_fs_003/War_and_Peace.txt http://www.gutenberg.org/ebooks/2600.txt.utf-8
-wget -O /zfs_001/zfs_fs_004/War_and_Peace.txt http://www.gutenberg.org/ebooks/2600.txt.utf-8
+# качаем 50 книжек
+for i in {1..50}; do echo "Download $i/50 book"; wget -qO /zfs_001/zfs_fs_001/$i.txt http://www.gutenberg.org/ebooks/$i.txt.utf-8; done
 
+# раскладываем их в остальлыные 3 папки 
+cp /zfs_001/zfs_fs_001/* /zfs_001/zfs_fs_002
+cp /zfs_001/zfs_fs_001/* /zfs_001/zfs_fs_003
+cp /zfs_001/zfs_fs_001/* /zfs_001/zfs_fs_004
+
+# смотрим на объем
 zfs list
+# смотрим на качество компрессии
+zfs get compressratio,compression /zfs_001/zfs_fs_00{1..4}
 ```
 
 вывод
 ```
+[root@otuslinux vagrant]# zfs list
 NAME                 USED  AVAIL     REFER  MOUNTPOINT
-zfs_001             4.87M   107M       28K  /zfs_001
-zfs_001/zfs_fs_001  1.19M   107M     1.19M  /zfs_001/zfs_fs_001
-zfs_001/zfs_fs_002  1.18M   107M     1.18M  /zfs_001/zfs_fs_002
-zfs_001/zfs_fs_003  1.18M   107M     1.18M  /zfs_001/zfs_fs_003
-zfs_001/zfs_fs_004  1.18M   107M     1.18M  /zfs_001/zfs_fs_004
+otus                4.96M   347M       25K  /otus
+otus/hometask2      1.88M   347M     1.88M  /otus/hometask2
+otus/storage        2.84M   347M     2.83M  /otus/storage
+zfs_001             70.2M  41.7M       28K  /zfs_001
+zfs_001/zfs_fs_001  18.7M  41.7M     18.7M  /zfs_001/zfs_fs_001
+zfs_001/zfs_fs_002  11.0M  41.7M     11.0M  /zfs_001/zfs_fs_002
+zfs_001/zfs_fs_003  24.7M  41.7M     24.7M  /zfs_001/zfs_fs_003
+zfs_001/zfs_fs_004  15.5M  41.7M     15.5M  /zfs_001/zfs_fs_004
+[root@otuslinux vagrant]# zfs get compressratio,compression /zfs_001/zfs_fs_00{1..4}
+NAME                PROPERTY       VALUE     SOURCE
+zfs_001/zfs_fs_001  compressratio  1.40x     -
+zfs_001/zfs_fs_001  compression    lzjb      local
+zfs_001/zfs_fs_002  compressratio  2.37x     -
+zfs_001/zfs_fs_002  compression    gzip      local
+zfs_001/zfs_fs_003  compressratio  1.05x     -
+zfs_001/zfs_fs_003  compression    zle       local
+zfs_001/zfs_fs_004  compressratio  1.68x     -
+zfs_001/zfs_fs_004  compression    lz4       local
 ```
+победил ```gzip```
+
 
 ## 2. Определить настройки pool’a
 
