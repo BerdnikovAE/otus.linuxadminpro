@@ -1,33 +1,33 @@
 # ДЗ 05. Загрузка системы
 
 Столнулся с трудностями: возникал kernel panic после редактирования grub меню.
-![kernel panic](images/kernel-panic.PNG)
+![kernel panic](images/kernel-panic.PNG)<br>
 Помогло убрать параметр ```console=ttyS0,115200n8``` загрузки ядра.
 
 ## 1. Попасть в систему без пароля несколькими способами
 
 ### 1. init=/bin/sh
 В меню grub нажимаем ```e```, правим добавляя в конце параметров ядра ```init=/bin/sh``` 
-![kernel panic](images/init-bin-sh.PNG)
+![kernel panic](images/init-bin-sh.PNG)<br>
 продолжаем загрузку с поправленными параметрами - нажимаем ```ctl+x```.<br>
 После загрузки монтируем fs в режиме для записи
 и проверяем через создание файла в корне
-![kernel panic](images/init-bin-sh-2.PNG)
+![kernel panic](images/init-bin-sh-2.PNG)<br>
 
 ### 2. rd.break
 В меню grub нажимаем ```e```, правим добавляя в конце параметров ядра ```rd.break``` 
-![kernel panic](images/rd-break.PNG)
+![kernel panic](images/rd-break.PNG)<br>
 загружаемся. <br>
 Монтируем fs систему, задаем корень, меянем пароль, уведомляем SElinux для принятия им измененных файлов при перезагрузке, записываем всё на диск.
 И два раза ```exit```
-![kernel panic](images/rd-break-2.PNG)
+![kernel panic](images/rd-break-2.PNG)<br>
 После ребута проверяем - получилось!
 
 ### 3. rw init=/bin/sh
 Тоже, что и первый вариант, только система сразу монтируется в режиме rw
-![kernel panic](images/rw-init-bin-sh.PNG)
+![kernel panic](images/rw-init-bin-sh.PNG)<br>
 Проверяем
-![kernel panic](images/rw-init-bin-sh-2.PNG)
+![kernel panic](images/rw-init-bin-sh-2.PNG)<br>
 Точно!
 
 ## 2. Установить систему с LVM, после чего переименовать VG
@@ -77,4 +77,4 @@
 test
 ```
 Проверим, перезагрузимся и в grub menu уберем ```rhgb quiet```
-![dracut](images/dracut.PNG)
+![dracut](images/dracut.PNG)<br>
