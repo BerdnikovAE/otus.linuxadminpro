@@ -26,7 +26,7 @@
 ### 3. rw init=/bin/sh
 Тоже, что и первый вариант, только система сразу монтируется в режиме rw
 ![kernel panic](images/rw-init-bin-sh.PNG)<br>
-Проверяем
+Проверяем<br>
 ![kernel panic](images/rw-init-bin-sh-2.PNG)<br>
 Точно!
 
