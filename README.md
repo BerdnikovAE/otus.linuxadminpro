@@ -8,7 +8,9 @@
 [ДЗ 04. NFS, FUSE](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/04) <br>
 [ДЗ 05. ZFS](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/05) <br>
 [ДЗ 06. Загрузка системы](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/06) <br>
+[ДЗ 07. Управление пакетами. Дистрибьюция софта](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/07) <br>
 
+ 
 ...
 
 
