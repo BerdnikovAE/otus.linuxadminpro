@@ -15,7 +15,6 @@
 [ДЗ 14. PAM](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/14) <br>
 
 
- 
 ...
 
 
