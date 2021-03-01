@@ -12,7 +12,7 @@
 [ДЗ 08. Bash](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/08) <br>
 [ДЗ 09. Управление процессами](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/09) <br>
 
-[ДЗ 14. PAM](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/14) <br>
+[ДЗ 11. PAM](https://github.com/BerdnikovAE/otus.linuxadminpro/tree/main/11) <br>
 
 
 ...
