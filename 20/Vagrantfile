@@ -1,0 +1,63 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+  
+  # config.vm.provision "ansible" do |ansible|
+  #   ansible.verbose = "vvv"
+  #   ansible.playbook = "provisioning/playbook.yml"
+  #   ansible.sudo = "true"
+  # end
+
+  config.vm.provider "virtualbox" do |v|
+	  v.memory = 256
+  end
+
+  config.vm.define "ns01" do |ns01|
+    ns01.vm.network "private_network", ip: "192.168.50.10", virtualbox__intnet: "dns"
+    ns01.vm.hostname = "ns01"
+  end
+
+  config.vm.define "ns02" do |ns02|
+    ns02.vm.network "private_network", ip: "192.168.50.11", virtualbox__intnet: "dns"
+    ns02.vm.hostname = "ns02"
+  end
+
+  config.vm.define "client" do |client|
+    client.vm.network "private_network", ip: "192.168.50.15", virtualbox__intnet: "dns"
+    client.vm.hostname = "client"
+  end
+
+  ns01 192.168.50.10
+  ns02 192.168.50.11
+  client  192.168.50.15
+
+  #
+  # this is our ansible controller VM which provisions the other VMs
+  #
+  # config.vm.define "controller" do |controller|
+  #   controller.vm.box = "wittman/centos-7.2-ansible"
+  #   controller.vm.network :private_network, ip: "192.168.50.2"
+  #   controller.vm.hostname = "controller"
+  #   # install ansible
+  #   #controller.vm.provision "shell", privileged: false, path: "install_ansible.sh"
+  #   # run ansible
+  #   # controller.vm.provision "shell", privileged: false, inline: <<-EOF
+  #   #   if [ ! -f /home/vagrant/.ssh/id_rsa ]; then
+  #   #     wget --no-check-certificate https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant -O /home/vagrant/.ssh/id_rsa
+  #   #     wget --no-check-certificate https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub -O /home/vagrant/.ssh/id_rsa.pub
+  #   #     chmod 600 /home/vagrant/.ssh/id_*
+  #   #   fi
+  #   #   rm -rf /tmp/provisioning
+  #   #   cp -r /vagrant/provisioning /tmp/provisioning
+  #   #   cd /tmp/provisioning
+  #   #   chmod -x hosts
+  #   #   export ANSIBLE_HOST_KEY_CHECKING=False
+  #   #   ansible-playbook playbook.yml --inventory-file=hosts
+  #   # EOF
+  # end  
+
+
+
+end
