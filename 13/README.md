@@ -22,7 +22,7 @@
 ## Часть 2
 Копируем лабу https://github.com/mbfx/otus-linux-adm/tree/master/selinux_dns_problems
 
-[Описание задания в самой лабе](selinux_dns\otus-linux-adm\selinux_dns_problems\README.md)
+[Описание задания в самой лабе](selinux_dns/otus-linux-adm/selinux_dns_problems/README.md)
 
 
 Запускаем клиент, пробуем делать update - ошибка:
