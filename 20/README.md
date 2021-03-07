@@ -46,21 +46,45 @@ systemctl restart named
 
 ## Теперь задание
 
-1. завести в зоне dns.lab имена
-  * web1 - смотрит на клиент1
-  * web2 смотрит на клиент2
-
-2. завести еще одну зону newdns.lab 
+1. завести еще одну зону newdns.lab 
   * www - смотрит на обоих клиентов
 
-3. настроить split-dns
-  * клиент1 - видит обе зоны, но в зоне dns.lab только web1
-  * клиент2 видит только dns.lab
+2. настроить split-dns
+  * клиент1 - видит обе зоны 
+  * клиент2 - видит только dns.lab
 
-п.2 и п.3 выполнен 
+3. завести в зоне dns.lab имена
+  * web1 - смотрит на клиент1
+  * web2 - смотрит на клиент2
+  * клиент1 в зоне dns.lab видит только web1
+  
+
+
+п.1 и п.2 выполнен 
+п.3. пока не понятно как acl на запись навешать 
 
 ``` sh
-#/etc/named.conf
+#cat /etc/named/named.newdns.lab
+$TTL 3600
+$ORIGIN newdns.lab.
+@               IN      SOA     ns01.newdns.lab. root.newdns.lab. (
+                            2021030701 ; serial
+                            3600       ; refresh (1 hour)
+                            600        ; retry (10 minutes)
+                            86400      ; expire (1 day)
+                            600        ; minimum (10 minutes)
+                        )
+
+                IN      NS      ns01.newdns.lab.
+                IN      NS      ns02.newdns.lab.
+www             IN      A       192.168.50.15
+www             IN      A       192.168.50.16
+
+; DNS Servers
+ns01            IN      A       192.168.50.10
+ns02            IN      A       192.168.50.11
+
+#cat /etc/named.conf
 acl "cl1" { 192.168.50.15; };
 
 view "new" {
@@ -115,7 +139,7 @@ view "old" {
 };
 ```
 
-проверяем п.2 и п.3.
+проверяем п.1 и п.2.
 ```sh
 [vagrant@client2 ~]$ dig @192.168.50.10 www.newdns.lab +short
 [vagrant@client2 ~]$
