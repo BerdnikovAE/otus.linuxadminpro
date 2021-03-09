@@ -199,7 +199,9 @@ Vagrantfile с начальным  построением сети
       Hosts/Net: 2                     Class C, Private Internet
 ```
 
-2. Проверка 
+2. Виртуальная лаба развертывается через [Vagrantfile](Vagrantfile)
+
+3. Проверка 
 ```sh
 #office1Server
 [vagrant@office1Server ~]$ ping 8.8.8.8
